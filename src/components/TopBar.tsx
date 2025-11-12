@@ -1,4 +1,4 @@
-import { Search, Bell, Plus, Calendar, MessageSquare, HelpCircle } from "lucide-react";
+import { Search, Bell, Plus, Calendar, MessageSquare, HelpCircle, LogOut, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -12,7 +12,12 @@ import {
 } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
 
-export function TopBar() {
+interface TopBarProps {
+  currentUser: { email: string; name: string } | null;
+  onLogout: () => void;
+}
+
+export function TopBar({ currentUser, onLogout }: TopBarProps) {
   const currentDate = new Date().toLocaleDateString('en-US', { 
     weekday: 'short', 
     month: 'short', 
@@ -88,16 +93,36 @@ export function TopBar() {
           </DropdownMenuContent>
         </DropdownMenu>
         
-        <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
-          <div className="text-right">
-            <p className="text-sm text-gray-900">Lillian Adunia</p>
-            <p className="text-xs text-gray-500">CEO</p>
-          </div>
-          <Avatar className="cursor-pointer hover:opacity-80 transition-opacity">
-            <AvatarImage src="https://images.unsplash.com/photo-1559736797-57946dd5c248?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMGxhbmRzY2FwZSUyMG5hdHVyZXxlbnwxfHx8fDE3NjE1OTY3ODB8MA&ixlib=rb-4.1.0&q=80&w=1080" />
-            <AvatarFallback>LA</AvatarFallback>
-          </Avatar>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="flex items-center gap-3 pl-3 border-l border-gray-200 cursor-pointer hover:bg-gray-50 rounded-lg p-2 transition-colors">
+              <div className="text-right">
+                <p className="text-sm text-gray-900">{currentUser?.name || "User"}</p>
+                <p className="text-xs text-gray-500">{currentUser?.email || ""}</p>
+              </div>
+              <Avatar>
+                <AvatarImage src="https://images.unsplash.com/photo-1559736797-57946dd5c248?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMGxhbmRzY2FwZSUyMG5hdHVyZXxlbnwxfHx8fDE3NjE1OTY3ODB8MA&ixlib=rb-4.1.0&q=80&w=1080" />
+                <AvatarFallback>{currentUser?.name.charAt(0) || "U"}</AvatarFallback>
+              </Avatar>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="cursor-pointer">
+              <User className="mr-2" size={16} />
+              Profile Settings
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              className="cursor-pointer text-red-600 focus:text-red-600"
+              onClick={onLogout}
+            >
+              <LogOut className="mr-2" size={16} />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
